@@ -104,3 +104,24 @@ def promotion_pitches():
 
     return render_template("promotion_pitches.html", pitches = pitches)
 
+@main.route('/pitch/<int:id>', methods = ['GET','POST'])
+def pitch(id):
+    pitch = Pitch.get_pitch(id)
+    posted_date = pitch.posted.strftime('%b %d, %Y')
+
+    if request.args.get("like"):
+        pitch.likes = pitch.likes + 1
+
+        db.session.add(pitch)
+        db.session.commit()
+
+        return redirect("/pitch/{pitch_id}".format(pitch_id=pitch.id))
+
+    elif request.args.get("dislike"):
+        pitch.dislikes = pitch.dislikes + 1
+
+        db.session.add(pitch)
+        db.session.commit()
+
+        return redirect("/pitch/{pitch_id}".format(pitch_id=pitch.id))
+
